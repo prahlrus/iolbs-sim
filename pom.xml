@@ -78,7 +78,7 @@
           <artifactId>exec-maven-plugin</artifactId>
           <version>${exec.version}</version>
           <configuration>
-            <mainClass>com.stinja.iolbs.Actuary</mainClass>
+            <mainClass>com.stinja.iolbs.Simulator</mainClass>
           </configuration>
         </plugin>
       </plugins>

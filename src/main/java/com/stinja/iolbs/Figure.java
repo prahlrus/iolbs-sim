@@ -34,7 +34,7 @@ public abstract class Figure implements Cloneable {
         int roll = 0;
         for (int x = 0; x < hd; x++)
             roll += (int) (Math.random() * 6);
-        System.out.printf("Hit die result: %d (%d damage so far)%n", roll, damage);
+        //System.out.printf("Hit die result: %d (%d damage so far)%n", roll, damage);
         return roll < damage;
     }
 
@@ -69,10 +69,10 @@ public abstract class Figure implements Cloneable {
             d = Damage.LIGHT;
 
         if (d != null) {
-            System.out.printf ( "%s deals %s to %s.%n" , this , d , opponent);
+            //System.err.printf ( "%s deals %s to %s.%n" , this , d , opponent);
             return opponent.hurt(d);
         } else {
-            System.out.printf ( "%s misses %s.%n" , this , opponent);
+            //System.err.printf ( "%s misses %s.%n" , this , opponent);
             return false;
         }
     }

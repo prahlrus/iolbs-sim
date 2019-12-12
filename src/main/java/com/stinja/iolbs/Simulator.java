@@ -7,7 +7,7 @@ import java.util.*;
  *
  */
 public class Simulator {
-    static final int TRIALS = 1;
+    static final int TRIALS = 1000;
 
     // the maximum ratio of one party size to the other
     static final int MAX_ODDS = 12;
@@ -64,6 +64,7 @@ public class Simulator {
                 }
 
                 Encounter e = new Encounter(players, enemies);
+                e.run();
 
                 if (players.size() == 0)
                     results[x]++;
@@ -96,7 +97,7 @@ public class Simulator {
     public static void main(String[] args) {
         System.out.printf("%-40s", "Warriors of rank:");
         for (int rank = 0; rank < MAX_RANK; rank++) {
-            System.out.printf("|%4d", rank);
+            System.out.printf("|%-4d", rank);
         }
         System.out.println();
 
@@ -107,7 +108,10 @@ public class Simulator {
             double[] trialResults = runTrials(boggle, rank);
             if (trialResults != null) {
                 int warriors = balance(trialResults);
-                System.out.printf("|%4d", warriors);
+                if (warriors > 0)
+                    System.out.printf("|%-4d", warriors);
+                else
+                    System.out.printf("|1/%-2d", 1 - warriors);
             } else {
                 System.out.print("|    ");
             }
