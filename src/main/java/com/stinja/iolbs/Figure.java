@@ -30,7 +30,7 @@ public abstract class Figure implements Cloneable {
     }
 
     boolean hurt(Damage d) {
-        damage += d.amount;
+        damage += 3;
         int roll = 0;
         for (int x = 0; x < hd; x++)
             roll += (int) (Math.random() * 6);
@@ -64,9 +64,7 @@ public abstract class Figure implements Cloneable {
         Damage d = null;
 
         if (r > target)
-            d = Damage.FULL;
-        else if (r == target)
-            d = Damage.LIGHT;
+            d = Damage.WEAPON;
 
         if (d != null) {
             //System.err.printf ( "%s deals %s to %s.%n" , this , d , opponent);
@@ -78,7 +76,7 @@ public abstract class Figure implements Cloneable {
     }
 
     boolean act
-            ( Encounter e
+            ( Match e
                     , boolean enemy
                     , Set<Figure> downed
             ) {

@@ -1,10 +1,10 @@
 package com.stinja.iolbs.components;
 
 import com.stinja.iolbs.Action;
-import com.stinja.iolbs.Component;
+import com.stinja.ecs.Component;
 
 public class Initiative implements Component<Initiative> {
-    public final int id;
+    private int id;
     public final Action[][] options;
 
     public Initiative
@@ -17,11 +17,17 @@ public class Initiative implements Component<Initiative> {
         this.options = new Action[][]{ beat0, beat1, beat2, beat3 };
     }
 
-    public Initiative clone() {
-        try {
-            return (Initiative) super.clone();
-        } catch (CloneNotSupportedException e) {
-            return null;
-        }
+    public int getId() {
+        return id;
+    }
+
+    public Initiative clone(int newId) {
+        return new Initiative
+                ( newId
+                , options[0]
+                , options[1]
+                , options[2]
+                , options[3]
+                );
     }
 }

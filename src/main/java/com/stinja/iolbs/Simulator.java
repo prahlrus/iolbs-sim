@@ -63,7 +63,7 @@ public class Simulator {
                     enemies.add(enemy);
                 }
 
-                Encounter e = new Encounter(players, enemies);
+                Match e = new Match(players, enemies);
                 e.run();
 
                 if (players.size() == 0)

@@ -61,7 +61,7 @@ public class Actuary {
                 enemies.add(f);
             }
 
-            Encounter e = new Encounter(players, enemies);
+            Match e = new Match(players, enemies);
             rounds += e.run();
 
             for (int x = 0; x < playerTeam.length; x++) {

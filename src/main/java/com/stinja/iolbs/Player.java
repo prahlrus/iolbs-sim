@@ -51,7 +51,7 @@ class Archer extends Player {
     }
 
     boolean act
-            ( Encounter e
+            ( Match e
                     , boolean enemy
                     , boolean engaged
                     , Set<Figure> downed

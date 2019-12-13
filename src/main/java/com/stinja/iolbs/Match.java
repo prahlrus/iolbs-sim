@@ -2,7 +2,7 @@ package com.stinja.iolbs;
 
 import java.util.*;
 
-public class Encounter {
+public class Match {
     List<Figure> players;
     List<Figure> enemies;
     List<Figure>[] actors;
@@ -10,7 +10,7 @@ public class Encounter {
 
     final int MAX_ACTIONS = 4;
 
-    Encounter(List<Figure> players, List<Figure> enemies) {
+    Match(List<Figure> players, List<Figure> enemies) {
         this.actors = new List[MAX_ACTIONS];
         for (int x = 0; x < MAX_ACTIONS; x++)
             this.actors[x] = new LinkedList<>();
