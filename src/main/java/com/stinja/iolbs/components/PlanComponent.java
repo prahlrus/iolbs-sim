@@ -1,16 +1,16 @@
 package com.stinja.iolbs.components;
 
 import com.stinja.ecs.Component;
-import com.stinja.iolbs.Action;
+import com.stinja.iolbs.rules.Plan;
 
-public class DecisionComponent extends Component {
-    public final Action action;
+public class PlanComponent extends Component {
+    public final Plan plan;
     public final int targetId;
     private int beats;
 
-    public DecisionComponent(int eid, Action action, int targetId, int beats) {
+    public PlanComponent(int eid, Plan plan, int targetId, int beats) {
         super(eid);
-        this.action = action;
+        this.plan = plan;
         this.targetId = targetId;
         this.beats = beats;
     }

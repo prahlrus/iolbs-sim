@@ -1,18 +1,18 @@
 package com.stinja.iolbs.components;
 
-import com.stinja.iolbs.Action;
+import com.stinja.iolbs.rules.Plan;
 import com.stinja.ecs.Component;
 
 public class InitiativeComponent extends Component {
-    public final Action[][] options;
+    public final Plan[][] options;
 
     public InitiativeComponent
             ( int eid
-            , Action[] beat0
-            , Action[] beat1
-            , Action[] beat2
-            , Action[] beat3) {
+            , Plan[] beat0
+            , Plan[] beat1
+            , Plan[] beat2
+            , Plan[] beat3) {
         super(eid);
-        this.options = new Action[][]{ beat0, beat1, beat2, beat3 };
+        this.options = new Plan[][]{ beat0, beat1, beat2, beat3 };
     }
 }

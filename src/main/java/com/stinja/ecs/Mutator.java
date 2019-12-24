@@ -30,4 +30,9 @@ public class Mutator<T extends Component> extends Accessor<T> {
             t.tick();
         }
     }
+
+    public void tick(int eid) {
+        if (data.containsKey(eid))
+            data.get(eid).tick();
+    }
 }

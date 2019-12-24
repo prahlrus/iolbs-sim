@@ -9,5 +9,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ComponentAccess {
     Class componentType();
-    boolean mutator();
+    boolean mutator() default false;
 }

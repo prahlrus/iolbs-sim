@@ -1,9 +1,16 @@
 package com.stinja.iolbs.components;
 
-import com.stinja.ecs.Component;
+import com.stinja.iolbs.rules.Threat;
 
-public class MonsterComponent extends Component{
-    public MonsterComponent(int eid) {
-        super(eid);
+public class MonsterComponent extends FigureComponent{
+    public final int save;
+
+    public MonsterComponent(int eid, int hd, int ac, int thAC, int save) {
+        super(eid, hd, ac, thAC);
+        this.save = save;
+    }
+
+    public int saveAgainst(Threat source) {
+        return save;
     }
 }

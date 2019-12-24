@@ -1,28 +1,19 @@
 package com.stinja.iolbs.components;
 
 import com.stinja.ecs.Component;
+import com.stinja.iolbs.rules.Threat;
 
-public class FigureComponent extends Component {
-    private int id;
-
+public abstract class FigureComponent extends Component {
     public final int hd;
     public final int ac;
     public final int thAC;
-    public final int vsMissiles;
-    public final int vsDevilrie;
-    public final int vsSurprise;
 
-    public FigureComponent(int eid, int hd, int ac, int thAC, int vsDevilrie, int vsMissiles, int vsSurprise) {
+    protected FigureComponent(int eid, int hd, int ac, int thAC) {
         super(eid);
         this.hd = hd;
         this.ac = ac;
         this.thAC = thAC;
-        this.vsDevilrie = vsDevilrie;
-        this.vsMissiles = vsMissiles;
-        this.vsSurprise = vsSurprise;
     }
 
-    public void tick() {
-
-    }
+    public abstract int saveAgainst(Threat source);
 }
