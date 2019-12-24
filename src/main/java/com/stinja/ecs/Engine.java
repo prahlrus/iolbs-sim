@@ -1,13 +1,11 @@
 package com.stinja.ecs;
 
+import java.util.Set;
+
 public abstract class Engine {
-    private Game game;
-
-    public abstract void frame();
-
-    protected void send(Message m) {
-        game.pass(m);
-    }
-
+    public abstract void beforeHandling();
     public abstract void handle(Message m);
+    public abstract Set<Message> frame();
+    public abstract void afterFrame();
+
 }

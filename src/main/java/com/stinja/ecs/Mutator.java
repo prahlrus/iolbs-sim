@@ -24,4 +24,10 @@ public class Mutator<T extends Component> extends Accessor<T> {
         readOnly.data = this.data;
         return readOnly;
     }
+
+    public void tick() {
+        for (T t : data.values()) {
+            t.tick();
+        }
+    }
 }

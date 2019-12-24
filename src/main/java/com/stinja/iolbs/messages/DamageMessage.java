@@ -4,10 +4,10 @@ import com.stinja.ecs.Message;
 import com.stinja.iolbs.Damage;
 
 public class DamageMessage extends Message {
-    public final Damage source;
+    public final int amount;
     
-    protected DamageMessage(int originId, Damage source) {
+    public DamageMessage(int originId, int amount) {
         super(originId);
-        this.source = source;
+        this.amount = amount;
     }
 }

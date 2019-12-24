@@ -64,7 +64,7 @@ public abstract class Figure implements Cloneable {
         Damage d = null;
 
         if (r > target)
-            d = Damage.WEAPON;
+            d = Damage.NORMAL;
 
         if (d != null) {
             //System.err.printf ( "%s deals %s to %s.%n" , this , d , opponent);

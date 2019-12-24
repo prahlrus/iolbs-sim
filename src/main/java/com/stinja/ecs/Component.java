@@ -1,6 +1,12 @@
 package com.stinja.ecs;
 
-public interface Component<T> {
-    int getId();
-    T clone(int newId);
+public abstract class Component {
+    public final int eid;
+
+    protected Component(int eid) {
+        this.eid = eid;
+    }
+
+    public void tick() {
+    }
 }
