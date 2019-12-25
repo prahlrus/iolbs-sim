@@ -18,4 +18,6 @@ public class Accessor<T extends Component> {
     public Collection<T> all() {
         return data.values();
     }
+
+    public int size() { return data.size(); }
 }

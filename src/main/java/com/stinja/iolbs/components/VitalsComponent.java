@@ -3,12 +3,12 @@ package com.stinja.iolbs.components;
 import com.stinja.ecs.Component;
 import com.stinja.iolbs.rules.Threat;
 
-public abstract class FigureComponent extends Component {
+public abstract class VitalsComponent extends Component {
     public final int hd;
     public final int ac;
     public final int thAC;
 
-    protected FigureComponent(int eid, int hd, int ac, int thAC) {
+    protected VitalsComponent(int eid, int hd, int ac, int thAC) {
         super(eid);
         this.hd = hd;
         this.ac = ac;

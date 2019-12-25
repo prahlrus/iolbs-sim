@@ -47,8 +47,8 @@ public class StrategyEngine extends Engine {
     @ComponentAccess(componentType = EngagedByComponent.class)
     Accessor<EngagedByComponent> engagedByData;
 
-    @ComponentAccess(componentType = ReactionComponent.class)
-    Accessor<ReactionComponent> reactionData;
+    @ComponentAccess(componentType = ReflexComponent.class)
+    Accessor<ReflexComponent> reactionData;
 
     @ComponentAccess(componentType = EngagingComponent.class)
     Accessor<EngagingComponent> engagingData;
@@ -141,7 +141,7 @@ public class StrategyEngine extends Engine {
             plan = options[(int) (Math.random() * options.length)];
 
         if (plan.target.specific) {
-            List<FigureComponent> candidates;
+            List<VitalsComponent> candidates;
             if (targetPlayers)
                 candidates = new ArrayList<>(playerData.all());
             else

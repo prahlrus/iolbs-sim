@@ -33,4 +33,17 @@ public enum Plan
         this.threat = threat;
     }
 
+    public static Plan parse(String planString) {
+        planString = planString.toUpperCase().strip();
+        if (planString.equals("AIM"))
+            return AIM;
+        else if (planString.equals("EVADE"))
+            return EVADE;
+        else if (planString.equals("FIGHT"))
+            return FIGHT;
+        else if (planString.equals("SNAP SHOT"))
+            return SNAP_SHOT;
+
+        return null;
+    }
 }

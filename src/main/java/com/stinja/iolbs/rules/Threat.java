@@ -2,8 +2,8 @@ package com.stinja.iolbs.rules;
 
 public enum Threat
     { NORMAL(true, 3,5)
-    , MISSILE (false, 3, 2)
-    , SNAP_SHOT (false, 3, 4)
+    , MISSILE (false, 3, 3)
+    , SNAP_SHOT (false, 3, 5)
     ;
 
     public final boolean attack;

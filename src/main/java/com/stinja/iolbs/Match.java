@@ -1,128 +1,98 @@
 package com.stinja.iolbs;
 
-import java.util.*;
+import com.stinja.ecs.Accessor;
+import com.stinja.ecs.Game;
+import com.stinja.iolbs.components.*;
+import com.stinja.iolbs.engines.*;
 
-public class Match {
-    List<Figure> players;
-    List<Figure> enemies;
-    List<Figure>[] actors;
-    Map<Figure,Figure> engagement;
+import java.util.HashSet;
+import java.util.Set;
 
-    final int MAX_ACTIONS = 4;
+public class Match extends Game {
 
-    Match(List<Figure> players, List<Figure> enemies) {
-        this.actors = new List[MAX_ACTIONS];
-        for (int x = 0; x < MAX_ACTIONS; x++)
-            this.actors[x] = new LinkedList<>();
+    private Accessor<EncounterComponent> encounterData;
+    private Accessor<PlayerComponent> playerData;
+    private Accessor<MonsterComponent> monsterData;
 
-        this.players = players;
-        for (Figure player : players)
-            addActor(player);
+    private String[] names;
 
-        this.enemies = enemies;
-        for (Figure enemy : enemies)
-            addActor(enemy);
-
-        engagement = new HashMap<>();
-    }
-
-    void addActor(Figure f) {
-        for (int x = MAX_ACTIONS - f.actions; x < MAX_ACTIONS; x++) {
-            this.actors[x].add(f);
-        }
-    }
-
-    void removeActor(Figure f) {
-        for (int x = MAX_ACTIONS - f.actions; x < MAX_ACTIONS; x++) {
-            this.actors[x].remove(f);
-        }
-
-        players.remove(f);
-        enemies.remove(f);
-    }
-
-    Figure nextInLine(boolean enemy, Set<Figure> downed) {
-        List<Figure> line = enemy ? enemies : players;
-
-        Figure next = null;
-        for (Figure f : line) {
-            if (downed.contains(f))
-                continue;
-            if (!engagement.containsValue(f))
-                return f;
-            if (next == null)
-                next = f;
-        }
-        return next;
-    }
-
-    void engage(Figure attacker, Figure defender) {
-        engagement.put(attacker, defender);
-    }
-
-    int run() {
-        Set<Figure> tapped = new HashSet<>();
-        Set<Figure> downed = new HashSet<>();
-        int rounds = 0;
-
-        while (players.size() > 0 && enemies.size() > 0) {
-            rounds++;
-            for (List<Figure> actor : actors) {
-                // System.out.printf("Round %d, turn %d.%n", rounds, turn);
-
-                for (Figure f : actor) {
-                    // System.out.printf("%s up.%n", f);
-
-                    if (tapped.contains(f))
-                        continue;
-                    // System.out.printf("%s will act.%n", f);
-
-                    if (engagement.containsKey(f)) {
-                        Figure g = engagement.get(f);
-                        //System.out.printf("%s v %s", f, g);
-                        // opponent already down
-                        if (downed.contains(g)) {
-                            //System.out.printf(" but %s is down.%n", g);
-
-                            engagement.remove(f);
-                            if (f.act
-                                    (this
-                                            , players.contains(f)
-                                            , downed
-                                    ))
-                                tapped.add(f);
-                            // opponent still fighting
-                        } else {
-                            //System.out.println(".");
-
-                            if (f.fight(g, 0)) {
-                                //System.out.printf("%s goes down.%n", g);
-
-                                downed.add(g);
-                                engagement.remove(f);
-                            }
-                            // else System.out.printf("%s is still in it.%n", g);
-
-                            tapped.add(f);
-                        }
-                    } else {
-                        if (f.act
-                                (this
-                                        , players.contains(f)
-                                        , downed
-                                ))
-                            tapped.add(f);
-                    }
+    Match(Set<Figure> figures) {
+        super(new Class[]
+                {ActionEngine.class
+                , DamageEngine.class
+                , DecisionEngine.class
+                , HitEngine.class
+                , ReadinessEngine.class
+                , StrategyEngine.class
+                , TacticalEngine.class
                 }
+            );
 
-                for (Figure d : downed)
-                    removeActor(d);
+        Set<EncounterComponent> encounterComponents = new HashSet<>();
+        Set<PlayerComponent> playerComponents = new HashSet<>();
+        Set<MonsterComponent> monsterComponents = new HashSet<>();
+        Set<InitiativeComponent> initiativeComponents = new HashSet<>();
+        Set<ReflexComponent> reflexComponents = new HashSet<>();
 
-                downed.clear();
+        // eid 0 tracks the frame
+        int eid = 0;
+        encounterComponents.add(new EncounterComponent(eid++));
+
+        names = new String[figures.size() + 1];
+
+        // collect the figure data
+        for (Figure f : figures) {
+            names[eid] = f.name;
+
+            InitiativeComponent ic = f.getInitiativeComponent(eid);
+            if (ic != null)
+                initiativeComponents.add(ic);
+
+            ReflexComponent rc = f.getReactionComponent(eid);
+            if (rc != null)
+                reflexComponents.add(rc);
+
+            if (f instanceof Player) {
+                Player p = (Player) f;
+                PlayerComponent pc = p.getPlayerComponent(eid);
+                if (pc != null)
+                    playerComponents.add(pc);
+            } else if (f instanceof Monster) {
+                Monster m = (Monster) f;
+                MonsterComponent mc = m.getMonsterComponent(eid);
+                if (mc != null)
+                    monsterComponents.add(mc);
             }
-            tapped.clear();
+
+            eid++;
         }
 
-        return rounds;
+        load(EngagingComponent.class, encounterComponents);
+        load(InitiativeComponent.class, initiativeComponents);
+        load(ReflexComponent.class, reflexComponents);
+        load(PlayerComponent.class, playerComponents);
+        load(MonsterComponent.class, monsterComponents);
+
+        encounterData = getMutator(EncounterComponent.class);
+        playerData = getMutator(PlayerComponent.class);
+        monsterData = getMutator(MonsterComponent.class);
+    }
+
+    public MatchResult run() {
+        while (playerData.size() > 0 && monsterData.size() > 0) {
+            frame();
+        }
+
+        // number of frames divided by the number of frames per round, rounded up
+        int rounds = (encounterData.get(0).getFrame() - 1) / EncounterComponent.BEATS_PER_ROUND + 1;
+        Set<String> survivingPlayers = new HashSet<>();
+        for (PlayerComponent pc : playerData.all())
+            survivingPlayers.add(names[pc.eid]);
+
+        return new MatchResult
+            ( rounds
+            , survivingPlayers.toArray(new String[survivingPlayers.size()])
+            , monsterData.size()
+            );
     }
 }

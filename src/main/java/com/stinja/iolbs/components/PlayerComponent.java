@@ -2,7 +2,7 @@ package com.stinja.iolbs.components;
 
 import com.stinja.iolbs.rules.Threat;
 
-public class PlayerComponent extends FigureComponent {
+public class PlayerComponent extends VitalsComponent {
     public final int vsDevilrie;
     public final int vsMissiles;
     public final int vsSurprise;

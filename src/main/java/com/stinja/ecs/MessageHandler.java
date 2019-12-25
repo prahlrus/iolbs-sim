@@ -8,6 +8,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MessageHandler {
-    Class[] emits();
-    Class[] reads();
+    Class<? extends Message>[] emits();
+    Class<? extends Message>[] reads();
 }

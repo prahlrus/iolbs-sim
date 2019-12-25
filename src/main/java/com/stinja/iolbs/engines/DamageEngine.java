@@ -1,9 +1,9 @@
 package com.stinja.iolbs.engines;
 
 import com.stinja.ecs.*;
-import com.stinja.iolbs.Dice;
+import com.stinja.iolbs.rules.Dice;
 import com.stinja.iolbs.components.EngagedByComponent;
-import com.stinja.iolbs.components.FigureComponent;
+import com.stinja.iolbs.components.VitalsComponent;
 import com.stinja.iolbs.components.MonsterComponent;
 import com.stinja.iolbs.components.PlayerComponent;
 import com.stinja.iolbs.messages.HurtMessage;
@@ -40,13 +40,13 @@ public class DamageEngine extends Engine {
             int originId = tm.originId;
             int targetId = tm.targetId;
 
-            FigureComponent originFC = null;
+            VitalsComponent originFC = null;
             if (playerData.exists(originId))
                 originFC = playerData.get(originId);
             else if (monsterData.exists(originId))
                 originFC = monsterData.get(originId);
 
-            FigureComponent targetFC = null;
+            VitalsComponent targetFC = null;
             if (playerData.exists(originId))
                 targetFC = playerData.get(targetId);
             else if (monsterData.exists(originId))

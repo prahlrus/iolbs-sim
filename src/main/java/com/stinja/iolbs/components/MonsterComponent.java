@@ -2,7 +2,7 @@ package com.stinja.iolbs.components;
 
 import com.stinja.iolbs.rules.Threat;
 
-public class MonsterComponent extends FigureComponent{
+public class MonsterComponent extends VitalsComponent {
     public final int save;
 
     public MonsterComponent(int eid, int hd, int ac, int thAC, int save) {

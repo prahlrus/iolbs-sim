@@ -1,9 +1,9 @@
 package com.stinja.iolbs.engines;
 
 import com.stinja.ecs.*;
-import com.stinja.iolbs.Dice;
+import com.stinja.iolbs.rules.Dice;
 import com.stinja.iolbs.components.DamageComponent;
-import com.stinja.iolbs.components.FigureComponent;
+import com.stinja.iolbs.components.VitalsComponent;
 import com.stinja.iolbs.components.MonsterComponent;
 import com.stinja.iolbs.components.PlayerComponent;
 import com.stinja.iolbs.messages.HurtMessage;
@@ -33,7 +33,7 @@ public class HitEngine extends Engine {
         if (m instanceof HurtMessage) {
             HurtMessage hm = (HurtMessage) m;
             int eid = hm.originId;
-            FigureComponent fc = null;
+            VitalsComponent fc = null;
             if (playerData.exists(eid))
                 fc = playerData.get(eid);
             else if (monsterData.exists(eid))

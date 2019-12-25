@@ -1,7 +1,7 @@
 package com.stinja.iolbs.engines;
 
 import com.stinja.ecs.*;
-import com.stinja.iolbs.components.FigureComponent;
+import com.stinja.iolbs.components.VitalsComponent;
 import com.stinja.iolbs.components.MonsterComponent;
 import com.stinja.iolbs.components.PlayerComponent;
 import com.stinja.iolbs.messages.EscapeMessage;
@@ -23,8 +23,8 @@ public class ActionEngine extends Engine {
     @ComponentAccess( componentType = MonsterComponent.class, mutator = false )
     private Accessor<MonsterComponent> monsterData;
 
-    @ComponentAccess( componentType = FigureComponent.class, mutator = false )
-    private Accessor<FigureComponent> figureData;
+    @ComponentAccess( componentType = VitalsComponent.class, mutator = false )
+    private Accessor<VitalsComponent> figureData;
 
 
     private Set<ThreatMessage> threatMessages;
@@ -48,12 +48,12 @@ public class ActionEngine extends Engine {
             }
 
             if (im.plan.target.splash && playerData.exists(im.originId)) {
-                for (FigureComponent fc : monsterData.all())
+                for (VitalsComponent fc : monsterData.all())
                     if (Math.random() * 2 > 1)
                         threatMessages.add(new ThreatMessage(im.originId, im.plan.threat, fc.eid));
             }
             else if (im.plan.target.splash && monsterData.exists(im.originId)) {
-                for (FigureComponent fc : playerData.all())
+                for (VitalsComponent fc : playerData.all())
                     if (Math.random() * 2 > 1)
                         threatMessages.add(new ThreatMessage(im.originId, im.plan.threat, fc.eid));
             }

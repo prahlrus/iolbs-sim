@@ -1,4 +1,4 @@
-package com.stinja.iolbs;
+package com.stinja.iolbs.rules;
 
 public class Dice {
     public static int check() {

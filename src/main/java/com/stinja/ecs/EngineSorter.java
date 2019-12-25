@@ -1,35 +1,31 @@
 package com.stinja.ecs;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public class EngineSorter {
-    private Engine[] es;
-    private Class[][] emission;
-    private Class[][] consumption;
+    private Class<? extends Engine>[] es;
+    private Class<? extends Message>[][] emission;
+    private Class<? extends Message>[][] consumption;
     private List<Engine> result;
 
-    private Set<Engine> marked;
-    private Set<Engine> tempMarked;
+    private Set<Class<? extends Engine>> marked;
+    private Set<Class<? extends Engine>> tempMarked;
 
-    public EngineSorter(Collection toSort) {
-        this.es = (Engine[]) toSort.toArray(new Engine[toSort.size()]);
+    public EngineSorter(Class<? extends Engine>[] toSort) {
+        this.es = toSort;
         this.emission = new Class[es.length][];
+        this.consumption = new Class[es.length][];
 
         // populate edge information
         for (int i = 0; i < es.length; i++) {
-            Class engineClazz = es[i].getClass();
+            Class<? extends Engine> engineClazz = es[i];
             if (engineClazz.isAnnotationPresent(MessageHandler.class)) {
-                MessageHandler mh = (MessageHandler) engineClazz.getDeclaredAnnotation(MessageHandler.class);
-                if (mh.emits() != null)
-                    this.emission[i] = mh.emits();
-                else
-                    this.emission[i] = new Class[0];
-
-                if (mh.reads() != null)
-                    this.consumption[i] = mh.reads();
-                else
-                    this.consumption[i] = new Class[0];
-
+                MessageHandler mh = engineClazz.getDeclaredAnnotation(MessageHandler.class);
+                this.emission[i] = mh.emits();
+                this.consumption[i] = mh.reads();
             } else {
                 this.emission[i] = new Class[0];
                 this.consumption[i] = new Class[0];
@@ -51,20 +47,19 @@ public class EngineSorter {
     }
 
     private void visit(int x) {
-        Engine e = es[x];
-
-        if (marked.contains(e))
+        Class<? extends Engine> clazz = es[x];
+        if (marked.contains(clazz))
             return;
-        else if (tempMarked.contains(e))
+        else if (tempMarked.contains(clazz))
             throw new RuntimeException
                     ("A cycle was encountered when sorting the Engines.");
 
-        tempMarked.add(e);
+        tempMarked.add(clazz);
 
         for (int y = 0; y < consumption.length; y++) {
             boolean linked = false;
-            for (Class messageType0 : emission[x]) {
-                for (Class messageType1 : consumption[y]) {
+            for (Class<? extends Message> messageType0 : emission[x]) {
+                for (Class<? extends Message> messageType1 : consumption[y]) {
                     if (messageType0 == messageType1) {
                         visit(y);
                         linked = true;
@@ -75,8 +70,18 @@ public class EngineSorter {
             }
         }
 
-        tempMarked.remove(e);
-        marked.add(e);
-        result.add(e);
+        tempMarked.remove(clazz);
+        marked.add(clazz);
+        try {
+            result.add(clazz.getDeclaredConstructor().newInstance());
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    String.format
+                            ("Caught a %s while trying to instantiate Engine of type %s; an Engine must have a public no-argument constructor."
+                            , e.getClass().getName()
+                            , clazz.getName()
+                            )
+                    );
+        }
     }
 }
