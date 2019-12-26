@@ -11,13 +11,15 @@ import java.io.Reader;
 import java.util.*;
 
 /**
- * Hello world!
+ * Contains the main methods for loading monsters from a CSV file and constructing and running encounter simulations.
  *
+ * @author Will Zev Prahl
+ * @version 0.2
  */
 public class Simulator {
-    private static final int TRIALS = 1000;
+    private static final int TRIALS = 100;
     // the maximum ratio of one party size to the other
-    private static final int MAX_ODDS = 12;
+    private static final int MAX_ODDS = 4;
     // the maximum rank of the opposing fighters
     private static final int MAX_RANK = 8;
     private static final double BALANCE_POINT = 0.5;
@@ -37,8 +39,12 @@ public class Simulator {
             };
 
     public static void main(String[] args) {
-        String bestiaryFilename = args[0];
+        Arena arena = new Arena();
+        bestiaryTrials(arena, loadBestiary(args[0]));
+        System.out.println();
+    }
 
+    private static Set<Monster> loadBestiary(String bestiaryFilename) {
         Reader bestiaryFile;
         Iterable<CSVRecord> records;
         try {
@@ -113,8 +119,10 @@ public class Simulator {
             );
         }
 
-        Arena arena = new Arena();
+        return bestiary;
+    }
 
+    private static void bestiaryTrials(Arena arena, Set<Monster> bestiary) {
         System.out.printf("%40s", "Warriors of rank ");
         for (int rank = 0; rank < MAX_RANK; rank++) {
             System.out.printf("|%-4d", rank);
@@ -122,31 +130,51 @@ public class Simulator {
         System.out.println();
 
         for (Monster monster : bestiary)
-            tableRow(arena, monster);
+            tableRow(arena, monster, true);
+
     }
 
-    private static void tableRow(Arena arena, Monster monster) {
+    private static void tableRow(Arena arena, Monster monster, boolean summary) {
         System.out.println("----------------------------------------|----|----|----|----|----|----|----|----");
-        System.out.printf("%-40s", monster.name + " is matched with");
-        double[][] trialResults = new double[MAX_RANK][2 * (MAX_ODDS - 1)];
+
+        // trialResults[rank][0] the chance of the monster TPKing MAX_ODDS fighters of rank
+        // trialResults[rank][MAX_ODDS - 1] chance of a single fighter of rank being killed by one tested figure
+        // trialResults[rank][-1] the chance of one fighter of rank being killed by MAX_ODDS tested figures
+        int height = 2 * MAX_ODDS - 1;
+        double[][] trialResults = new double[MAX_RANK][height];
 
         for (int rank = 0; rank < MAX_RANK; rank++) {
-            // results[0] the chance of one tested figure TPKing  MAX_ODDS fighters of rank
-            // results[MAX_ODDS - 1] chance of a fighter of rank being killed by one tested figure
-            // results[-1] the chance of one fighter of rank being killed by MAX_ODDS tested figures
-            for (int x = 0; x < trialResults.length; x++) {
-                int ratio = MAX_ODDS - x;
-                trialResults[rank][x] = runTrials(arena, monster, ratio, rank);
+            for (int col = 0; col < height; col++) {
+                trialResults[rank][col] = runTrials(arena, monster,MAX_ODDS - col, rank);
             }
-
-            int warriors = balance(trialResults[rank]);
-            if (warriors > 0)
-                System.out.printf("|%-4d", warriors);
-            else
-                System.out.printf("|1/%-2d", 2 - warriors);
         }
 
-        System.out.println();
+        if (summary) {
+            System.out.printf("%-40s", monster.name + " is matched with");
+            for (int rank = 0; rank < MAX_RANK; rank++) {
+                int warriors = balance(trialResults[rank]);
+                if (warriors > 0)
+                    System.out.printf("|%-4d", warriors);
+                else
+                    System.out.printf("|1/%-2d", 2 - warriors);
+            }
+            System.out.println();
+        } else {
+            for (int col = 0; col < height; col++) {
+                System.out.printf("%-40s",
+                    String.format
+                        ( (col >= MAX_ODDS) ? "%s times %d vs one" : "%s vs %d"
+                                , monster.name
+                        , (col >= MAX_ODDS) ? 2 + col - MAX_ODDS : MAX_ODDS - col
+                        )
+                );
+                for (int rank = 0; rank < MAX_RANK; rank++) {
+                    System.out.printf("|%-4d", (int) (100 * trialResults[rank][col]));
+                }
+                System.out.println();
+            }
+        }
+
     }
 
     private static int balance(double[] tpkChances) {
@@ -176,13 +204,13 @@ public class Simulator {
             enemiesCount = 1;
         } else {
             playersCount = 1;
-            enemiesCount = 1 - ratio;
+            enemiesCount = 2 - ratio;
         }
 
         Set<Figure> figures = new HashSet<>();
 
-        for (int y = 0; y < playersCount; y++)
-            figures.add(new Player(playerNames[y],Player.Type.HEAVY, rank, 0));
+        for (int x = 0; x < playersCount; x++)
+            figures.add(new Player(playerNames[x],Player.Type.HEAVY, rank, 0));
         for (int y = 0; y < enemiesCount; y++)
             figures.add(new Monster(m));
 
@@ -193,11 +221,8 @@ public class Simulator {
                 result++;
         }
 
-        return result /= TRIALS;
+        return result / TRIALS;
     }
-
-
-
 
 
 }

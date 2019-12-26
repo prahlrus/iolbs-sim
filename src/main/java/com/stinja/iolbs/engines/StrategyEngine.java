@@ -1,6 +1,10 @@
 package com.stinja.iolbs.engines;
 
-import com.stinja.ecs.*;
+import com.stinja.ecs.Accessor;
+import com.stinja.ecs.ComponentAccess;
+import com.stinja.ecs.Engine;
+import com.stinja.ecs.Message;
+import com.stinja.ecs.MessageHandler;
 import com.stinja.iolbs.messages.DisengagementMessage;
 import com.stinja.iolbs.messages.EngagementMessage;
 import com.stinja.iolbs.messages.ActionMessage;
@@ -14,6 +18,17 @@ import java.util.List;
 import java.util.Set;
 
 import static com.stinja.iolbs.components.EncounterComponent.BEATS_PER_ROUND;
+
+/**
+ * Responsible for choosing what each figure is going to do at the beginning of each
+ * frame. Each figure can produce up to one {@link com.stinja.iolbs.messages.BideMessage BideMessage},
+ * {@link com.stinja.iolbs.messages.DisengagementMessage DisengagementMessage},
+ * {@link com.stinja.iolbs.messages.EngagementMessage EngagementMessage} or
+ * {@link com.stinja.iolbs.messages.ActionMessage ActionMessage} per frame.
+ *
+ * @author Will Zev Prahl
+ * @version 0.2
+ */
 
 @MessageHandler
         ( emits =
@@ -91,13 +106,15 @@ public class StrategyEngine extends Engine {
 
         Plan plan = null;
         int targetId = -1;
-        // entities should't have negative ids, non-targeted actions should target the actor
 
         if (engagedByData.exists(eid) && reactionData.exists(eid)) {
+
             Plan[] tactics = reactionData.get(eid).tactics;
             plan = tactics[(int) (Math.random() * tactics.length)];
+            int opponentId = engagedByData.get(eid).opponentId;
+
             if (plan.target.specific)
-                targetId = engagedByData.get(eid).opponentId;
+                targetId = opponentId;
             else
                 targetId = eid;
 
@@ -133,20 +150,24 @@ public class StrategyEngine extends Engine {
             }
 
             // there's time remaining
-            if (plan != null && dc.getBeats() > 0)
+            if (plan != null && dc.getBeats() > 0) {
                 return new BideMessage(eid);
+            }
         }
 
         if (plan == null)
             plan = options[(int) (Math.random() * options.length)];
 
-        if (plan.target.specific) {
-            List<? extends VitalsComponent> candidates;
-            if (targetPlayers)
-                candidates = new ArrayList<>(playerData.all());
-            else
-                candidates = new ArrayList<>(monsterData.all());
-            targetId = candidates.get((int) (Math.random() * candidates.size())).eid;
+        if (targetId < 0) {
+            if (plan.target.specific) {
+                List<? extends VitalsComponent> candidates;
+                if (targetPlayers)
+                    candidates = new ArrayList<>(playerData.all());
+                else
+                    candidates = new ArrayList<>(monsterData.all());
+                targetId = candidates.get((int) (Math.random() * candidates.size())).eid;
+            } else
+                targetId = eid;
         }
 
         // determine if the action can be taken, or we need to engage the enemy
@@ -155,10 +176,12 @@ public class StrategyEngine extends Engine {
             if (engagingData.exists(eid))
                 engage = engagingData.get(eid);
 
-            if (engage != null && engage.targetId == targetId)
+            if (engage != null && engage.targetId == targetId) {
                 return new ActionMessage(eid, plan, targetId);
-            else
+            }
+            else {
                 return new EngagementMessage(eid, targetId);
+            }
         } else {
             if (engagedByData.exists(eid))
                 return new DisengagementMessage(eid);

@@ -10,6 +10,12 @@ import java.util.Set;
 
 import static com.stinja.iolbs.components.EncounterComponent.BEATS_PER_ROUND;
 
+/**
+ * Actually handles the simulation of encounters.
+ *
+ * @author Will Zev Prahl
+ * @version 0.2
+ */
 public class Arena extends Game {
 
     private Accessor<EncounterComponent> encounterData;
@@ -31,6 +37,11 @@ public class Arena extends Game {
             );
     }
 
+    /**
+     * Sets up a match, loading the given Figures' information.
+     *
+     * @param figures To use in the encounter.
+     */
     public void match (Set<Figure> figures) {
         reset();
 
@@ -61,13 +72,15 @@ public class Arena extends Game {
             if (f instanceof Player) {
                 Player p = (Player) f;
                 PlayerComponent pc = p.getPlayerComponent(eid);
-                if (pc != null)
+                if (pc != null) {
                     playerComponents.add(pc);
+                }
             } else if (f instanceof Monster) {
                 Monster m = (Monster) f;
                 MonsterComponent mc = m.getMonsterComponent(eid);
-                if (mc != null)
+                if (mc != null) {
                     monsterComponents.add(mc);
+                }
             }
 
             eid++;
@@ -84,16 +97,14 @@ public class Arena extends Game {
         monsterData = getMutator(MonsterComponent.class);
     }
 
+    /**
+     * Runs the simulation for a loaded encounter.
+     *
+     * @return A MatchResult describing how long the encounter took and who survived it.
+     */
     public MatchResult run() {
         while (playerData.size() > 0 && monsterData.size() > 0) {
             frame();
-//            int frame = (encounterData.get(0).getFrame());
-//            System.err.printf("It's round %d frame %d.%n", frame / BEATS_PER_ROUND, frame % BEATS_PER_ROUND);
-
-//            for (PlayerComponent pc : playerData.all())
-//                componentStatus(pc.eid);
-//            for (MonsterComponent mc : monsterData.all())
-//                componentStatus(mc.eid);
         }
 
         // number of frames divided by the number of frames per round, rounded up

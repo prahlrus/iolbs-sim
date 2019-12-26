@@ -4,6 +4,10 @@ import com.stinja.iolbs.components.InitiativeComponent;
 import com.stinja.iolbs.components.ReflexComponent;
 import com.stinja.iolbs.rules.Plan;
 
+/**
+ * Contains the things that {@link com.stinja.iolbs.Player Players} and  {@link com.stinja.iolbs.Monster Monsters}
+ * have in common.
+ */
 public abstract class Figure {
 
     protected static Plan[] nothing = {};

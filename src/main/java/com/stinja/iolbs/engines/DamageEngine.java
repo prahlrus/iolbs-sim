@@ -1,6 +1,10 @@
 package com.stinja.iolbs.engines;
 
-import com.stinja.ecs.*;
+import com.stinja.ecs.Accessor;
+import com.stinja.ecs.ComponentAccess;
+import com.stinja.ecs.Engine;
+import com.stinja.ecs.Message;
+import com.stinja.ecs.MessageHandler;
 import com.stinja.iolbs.rules.Dice;
 import com.stinja.iolbs.components.EngagedByComponent;
 import com.stinja.iolbs.components.VitalsComponent;
@@ -13,6 +17,13 @@ import com.stinja.iolbs.rules.Threat;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Responsible for adjudicating {@link com.stinja.iolbs.messages.ThreatMessage ThreatMessages} and emitting
+ * {@link com.stinja.iolbs.messages.HurtMessage HurtMessages} if they actually result in damage dealt.
+ *
+ * @author Will Zev Prahl
+ * @version 0.2
+ */
 @MessageHandler
         ( emits = {HurtMessage.class}
         , reads = {ThreatMessage.class}
@@ -28,10 +39,13 @@ public class DamageEngine extends Engine {
     @ComponentAccess( componentType = PlayerComponent.class)
     private Accessor<PlayerComponent> playerData;
 
+    public DamageEngine() {
+        hurtMessages = new HashSet<>();
+    }
+
     private Set<Message> hurtMessages;
 
     public void beforeHandling() {
-        hurtMessages = new HashSet<>();
     }
 
     public void handle(Message m) {

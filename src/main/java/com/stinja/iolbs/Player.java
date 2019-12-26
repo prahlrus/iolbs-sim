@@ -3,16 +3,18 @@ package com.stinja.iolbs;
 import com.stinja.iolbs.components.PlayerComponent;
 import com.stinja.iolbs.rules.Plan;
 
+/**
+ * Represents information about a player, so that an encounter can be repeatedly re-populated with the same players.
+ *
+ * @author Will Zev Prahl
+ * @version 0.2
+ */
 public class Player extends Figure {
     public enum Type
         { HEAVY
                 ( new Plan[]{ Plan.FIGHT }
                 , new Plan[]{ Plan.FIGHT }
                 , 2)
-//        , ARCHER
-//                ( new Plan[]{ Plan.AIM }
-//                , new Plan[]{ Plan.SNAP_SHOT }
-//                , 4)
         ;
 
         public final Plan[] options;

@@ -67,17 +67,22 @@ public abstract class Game {
     public void frame() {
         queue.clear();
         for (Engine e : engines) {
-//            System.err.printf("%s about to fire, %d messages in the queue.\n", e.getClass().getSimpleName(), queue.size());
             e.beforeHandling();
             for (Message m : queue) {
                 if (messageTypeHandlers.containsKey(m.getClass()) && messageTypeHandlers.get(m.getClass()).contains(e)) {
-//                    System.err.printf("\tHandling message of type %s.\n", m.getClass().getSimpleName());
+//                    System.out.printf("%s to handle an %s for %d\n", e.getClass().getSimpleName(), m.getClass().getSimpleName(), m.originId);
                     e.handle(m);
                 }
             }
             Set<Message> newMessages = e.frame();
-//            System.err.printf("\tEngine fired, %d messages emitted.\n", newMessages.size());
-            queue.addAll(newMessages);
+
+            if (newMessages != null) {
+                for (Message m : newMessages) {
+//                    System.out.printf("%s emitted a %s for %d\n", e.getClass().getSimpleName(), m.getClass().getSimpleName(), m.originId);
+                    queue.add(m);
+                }
+
+            }
             e.afterFrame();
         }
     }

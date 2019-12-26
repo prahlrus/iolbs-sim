@@ -3,6 +3,12 @@ package com.stinja.iolbs;
 import com.stinja.iolbs.components.MonsterComponent;
 import com.stinja.iolbs.rules.Plan;
 
+/**
+ * Represents information about a monster, so that an encounter can be repeatedly re-populated with the same monster.
+ *
+ * @author Will Zev Prahl
+ * @version 0.2
+ */
 public class Monster extends Figure {
     private int hd;
     private int ac;
