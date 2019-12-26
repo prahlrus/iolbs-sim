@@ -56,10 +56,10 @@ public class EngineSorter {
 
         tempMarked.add(clazz);
 
-        for (int y = 0; y < consumption.length; y++) {
+        for (int y = 0; y < emission.length; y++) {
             boolean linked = false;
-            for (Class<? extends Message> messageType0 : emission[x]) {
-                for (Class<? extends Message> messageType1 : consumption[y]) {
+            for (Class<? extends Message> messageType0 : consumption[x]) {
+                for (Class<? extends Message> messageType1 : emission[y]) {
                     if (messageType0 == messageType1) {
                         visit(y);
                         linked = true;

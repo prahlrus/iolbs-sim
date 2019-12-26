@@ -15,14 +15,11 @@ public abstract class Game {
         this.messageTypeHandlers = new HashMap<>();
         this.componentData = new HashMap<>();
 
-        System.err.printf("Sorting %d engines...", engineTypes.length);
         EngineSorter sorter = new EngineSorter(engineTypes);
         engines = sorter.sort();
-        System.err.println("Done.");
 
         Map<Class<? extends Component>,Engine> mutationRights = new HashMap<>();
 
-        System.err.print("Injecting component dependencies...");
         for (Engine e : engines) {
             if (e.getClass().isAnnotationPresent(MessageHandler.class)) {
                 MessageHandler mh = e.getClass().getDeclaredAnnotation(MessageHandler.class);
@@ -64,20 +61,23 @@ public abstract class Game {
                     throw new RuntimeException("Could not inject dependency for field " + f.getName() + ".");
                 }
             }
-
-            System.err.println("Done.");
         }
     }
 
     public void frame() {
         queue.clear();
         for (Engine e : engines) {
+//            System.err.printf("%s about to fire, %d messages in the queue.\n", e.getClass().getSimpleName(), queue.size());
             e.beforeHandling();
             for (Message m : queue) {
-                if (messageTypeHandlers.containsKey(m.getClass()) && messageTypeHandlers.get(m.getClass()).contains(e))
+                if (messageTypeHandlers.containsKey(m.getClass()) && messageTypeHandlers.get(m.getClass()).contains(e)) {
+//                    System.err.printf("\tHandling message of type %s.\n", m.getClass().getSimpleName());
                     e.handle(m);
+                }
             }
-            queue.addAll(e.frame());
+            Set<Message> newMessages = e.frame();
+//            System.err.printf("\tEngine fired, %d messages emitted.\n", newMessages.size());
+            queue.addAll(newMessages);
             e.afterFrame();
         }
     }
@@ -103,6 +103,12 @@ public abstract class Game {
         }
     }
 
+    public void reset() {
+        for (Mutator m : componentData.values()) {
+            m.clear();
+        }
+    }
+
     protected Mutator getMutator(Class<? extends Component> componentType) {
         if (componentData.containsKey(componentType)) {
             return componentData.get(componentType);
@@ -110,4 +116,16 @@ public abstract class Game {
             throw new RuntimeException("No mutator exists for component of type " + componentType.getName() + ".");
         }
     }
+
+    protected void componentStatus(int eid) {
+        System.err.printf("\nEntity #%d has components: ", eid);
+        for (Map.Entry<Class<? extends Component>,Mutator> entry : componentData.entrySet()) {
+            Mutator m = entry.getValue();
+            if (m.exists(eid)) {
+                System.out.printf("\n\t%s", m.get(eid).toString());
+            }
+        }
+    }
+
+
 }

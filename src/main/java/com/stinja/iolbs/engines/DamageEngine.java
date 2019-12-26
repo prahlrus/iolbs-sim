@@ -40,32 +40,37 @@ public class DamageEngine extends Engine {
             int originId = tm.originId;
             int targetId = tm.targetId;
 
-            VitalsComponent originFC = null;
+            VitalsComponent originVC = null;
             if (playerData.exists(originId))
-                originFC = playerData.get(originId);
+                originVC = playerData.get(originId);
             else if (monsterData.exists(originId))
-                originFC = monsterData.get(originId);
+                originVC = monsterData.get(originId);
 
-            VitalsComponent targetFC = null;
-            if (playerData.exists(originId))
-                targetFC = playerData.get(targetId);
-            else if (monsterData.exists(originId))
-                targetFC = monsterData.get(targetId);
-
-            if (originFC == null || targetFC == null)
+            if (originVC == null) {
                 return;
+            }
+
+            VitalsComponent targetVC = null;
+            if (playerData.exists(targetId))
+                targetVC = playerData.get(targetId);
+            else if (monsterData.exists(targetId))
+                targetVC = monsterData.get(targetId);
+
+            if (targetVC == null) {
+                return;
+            }
 
             Threat threat = tm.threat;
 
             int threshold;
             if (threat.attack)
-                threshold = originFC.thAC;
+                threshold = originVC.thAC;
             else
-                threshold = targetFC.saveAgainst(threat);
+                threshold = targetVC.saveAgainst(threat);
 
             int ddc;
             if (threat.attack)
-                ddc = targetFC.ac;
+                ddc = targetVC.ac;
             else
                 ddc = threat.ddc;
 

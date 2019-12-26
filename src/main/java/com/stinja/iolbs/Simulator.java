@@ -43,7 +43,7 @@ public class Simulator {
         Iterable<CSVRecord> records;
         try {
             bestiaryFile = new FileReader(bestiaryFilename);
-            records = CSVFormat.DEFAULT.parse(bestiaryFile);
+            records = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(bestiaryFile);
         } catch (FileNotFoundException e) {
             throw new RuntimeException("No such file as " + bestiaryFilename + ".");
         } catch (IOException e) {
@@ -113,6 +113,8 @@ public class Simulator {
             );
         }
 
+        Arena arena = new Arena();
+
         System.out.printf("%40s", "Warriors of rank ");
         for (int rank = 0; rank < MAX_RANK; rank++) {
             System.out.printf("|%-4d", rank);
@@ -120,20 +122,30 @@ public class Simulator {
         System.out.println();
 
         for (Monster monster : bestiary)
-            tableRow(monster);
+            tableRow(arena, monster);
     }
 
-    private static void tableRow(Monster monster) {
+    private static void tableRow(Arena arena, Monster monster) {
         System.out.println("----------------------------------------|----|----|----|----|----|----|----|----");
-        System.out.printf("%-40s", monster + " is matched with");
+        System.out.printf("%-40s", monster.name + " is matched with");
+        double[][] trialResults = new double[MAX_RANK][2 * (MAX_ODDS - 1)];
+
         for (int rank = 0; rank < MAX_RANK; rank++) {
-            double[] trialResults = runTrials(monster, rank);
-            int warriors = balance(trialResults);
+            // results[0] the chance of one tested figure TPKing  MAX_ODDS fighters of rank
+            // results[MAX_ODDS - 1] chance of a fighter of rank being killed by one tested figure
+            // results[-1] the chance of one fighter of rank being killed by MAX_ODDS tested figures
+            for (int x = 0; x < trialResults.length; x++) {
+                int ratio = MAX_ODDS - x;
+                trialResults[rank][x] = runTrials(arena, monster, ratio, rank);
+            }
+
+            int warriors = balance(trialResults[rank]);
             if (warriors > 0)
                 System.out.printf("|%-4d", warriors);
             else
-                System.out.printf("|1/%-2d", 1 - warriors);
+                System.out.printf("|1/%-2d", 2 - warriors);
         }
+
         System.out.println();
     }
 
@@ -155,42 +167,33 @@ public class Simulator {
         return -MAX_ODDS;
     }
 
-    private static double[] runTrials(Monster m, int rank) {
-        double[] results = new double[2 * (MAX_ODDS - 1)];
-        // results[0] the chance of one tested figure TPKing  MAX_ODDS fighters of rank
-        // results[MAX_ODDS - 1] chance of a fighter of rank being killed by one tested figure
-        // results[-1] the chance of one fighter of rank being killed by MAX_ODDS tested figures
+    private static double runTrials(Arena arena, Monster m, int ratio, int rank) {
+        double result = 0.0;
+        int playersCount, enemiesCount;
 
-        for (int x = 0; x < results.length; x++) {
-            int ratio = MAX_ODDS - x;
-            int playersCount, enemiesCount;
-
-            if (ratio > 0) {
-                playersCount = ratio;
-                enemiesCount = 1;
-            } else {
-                playersCount = 1;
-                enemiesCount = 1 - ratio;
-            }
-
-            Set<Figure> figures = new HashSet<>();
-
-            for (int y = 0; y < playersCount; y++)
-                figures.add(new Player(playerNames[y],Player.Type.HEAVY, rank, 0));
-            for (int y = 0; y < enemiesCount; y++)
-                figures.add(new Monster(m));
-
-            for (int t = 0; t < TRIALS; t++) {
-                Match match = new Match(figures);
-                MatchResult matchResult = match.run();
-                if (matchResult.playerSurvival.length > 0)
-                    results[x]++;
-            }
-
-            results[x] /= TRIALS;
+        if (ratio > 0) {
+            playersCount = ratio;
+            enemiesCount = 1;
+        } else {
+            playersCount = 1;
+            enemiesCount = 1 - ratio;
         }
 
-        return results;
+        Set<Figure> figures = new HashSet<>();
+
+        for (int y = 0; y < playersCount; y++)
+            figures.add(new Player(playerNames[y],Player.Type.HEAVY, rank, 0));
+        for (int y = 0; y < enemiesCount; y++)
+            figures.add(new Monster(m));
+
+        for (int t = 0; t < TRIALS; t++) {
+            arena.match(figures);
+            MatchResult matchResult = arena.run();
+            if (matchResult.monsterSurvival > 0)
+                result++;
+        }
+
+        return result /= TRIALS;
     }
 
 

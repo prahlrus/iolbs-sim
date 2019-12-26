@@ -8,7 +8,9 @@ import com.stinja.iolbs.engines.*;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Match extends Game {
+import static com.stinja.iolbs.components.EncounterComponent.BEATS_PER_ROUND;
+
+public class Arena extends Game {
 
     private Accessor<EncounterComponent> encounterData;
     private Accessor<PlayerComponent> playerData;
@@ -16,7 +18,7 @@ public class Match extends Game {
 
     private String[] names;
 
-    Match(Set<Figure> figures) {
+    Arena() {
         super(new Class[]
                 {ActionEngine.class
                 , DamageEngine.class
@@ -27,6 +29,10 @@ public class Match extends Game {
                 , TacticalEngine.class
                 }
             );
+    }
+
+    public void match (Set<Figure> figures) {
+        reset();
 
         Set<EncounterComponent> encounterComponents = new HashSet<>();
         Set<PlayerComponent> playerComponents = new HashSet<>();
@@ -67,7 +73,7 @@ public class Match extends Game {
             eid++;
         }
 
-        load(EngagingComponent.class, encounterComponents);
+        load(EncounterComponent.class, encounterComponents);
         load(InitiativeComponent.class, initiativeComponents);
         load(ReflexComponent.class, reflexComponents);
         load(PlayerComponent.class, playerComponents);
@@ -81,10 +87,17 @@ public class Match extends Game {
     public MatchResult run() {
         while (playerData.size() > 0 && monsterData.size() > 0) {
             frame();
+//            int frame = (encounterData.get(0).getFrame());
+//            System.err.printf("It's round %d frame %d.%n", frame / BEATS_PER_ROUND, frame % BEATS_PER_ROUND);
+
+//            for (PlayerComponent pc : playerData.all())
+//                componentStatus(pc.eid);
+//            for (MonsterComponent mc : monsterData.all())
+//                componentStatus(mc.eid);
         }
 
         // number of frames divided by the number of frames per round, rounded up
-        int rounds = (encounterData.get(0).getFrame() - 1) / EncounterComponent.BEATS_PER_ROUND + 1;
+        int rounds = (encounterData.get(0).getFrame() - 1) / BEATS_PER_ROUND + 1;
         Set<String> survivingPlayers = new HashSet<>();
         for (PlayerComponent pc : playerData.all())
             survivingPlayers.add(names[pc.eid]);

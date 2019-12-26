@@ -141,7 +141,7 @@ public class StrategyEngine extends Engine {
             plan = options[(int) (Math.random() * options.length)];
 
         if (plan.target.specific) {
-            List<VitalsComponent> candidates;
+            List<? extends VitalsComponent> candidates;
             if (targetPlayers)
                 candidates = new ArrayList<>(playerData.all());
             else
