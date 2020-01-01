@@ -1,6 +1,6 @@
 package com.stinja.iolbs.components;
 
-import com.stinja.ecs.Component;
+import com.stinja.hecs.Component;
 
 public class EncounterComponent extends Component{
     public static final int BEATS_PER_ROUND = 4;

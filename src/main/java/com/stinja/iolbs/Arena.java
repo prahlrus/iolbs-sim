@@ -1,7 +1,7 @@
 package com.stinja.iolbs;
 
-import com.stinja.ecs.Accessor;
-import com.stinja.ecs.Game;
+import com.stinja.hecs.Accessor;
+import com.stinja.hecs.Game;
 import com.stinja.iolbs.components.*;
 import com.stinja.iolbs.engines.*;
 

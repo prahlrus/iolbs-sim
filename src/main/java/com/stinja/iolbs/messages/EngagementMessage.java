@@ -1,6 +1,6 @@
 package com.stinja.iolbs.messages;
 
-import com.stinja.ecs.Message;
+import com.stinja.hecs.Message;
 
 public class EngagementMessage extends Message {
     public final int targetId;

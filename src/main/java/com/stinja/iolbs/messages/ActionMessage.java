@@ -1,6 +1,6 @@
 package com.stinja.iolbs.messages;
 
-import com.stinja.ecs.Message;
+import com.stinja.hecs.Message;
 import com.stinja.iolbs.rules.Plan;
 
 public class ActionMessage extends Message {

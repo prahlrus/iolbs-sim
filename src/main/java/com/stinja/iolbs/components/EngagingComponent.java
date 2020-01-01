@@ -1,6 +1,6 @@
 package com.stinja.iolbs.components;
 
-import com.stinja.ecs.Component;
+import com.stinja.hecs.Component;
 
 public class EngagingComponent extends Component {
     public final int targetId;

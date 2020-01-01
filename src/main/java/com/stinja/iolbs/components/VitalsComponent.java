@@ -1,6 +1,6 @@
 package com.stinja.iolbs.components;
 
-import com.stinja.ecs.Component;
+import com.stinja.hecs.Component;
 import com.stinja.iolbs.rules.Threat;
 
 public abstract class VitalsComponent extends Component {

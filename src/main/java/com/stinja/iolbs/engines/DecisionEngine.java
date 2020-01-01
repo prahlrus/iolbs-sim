@@ -1,6 +1,6 @@
 package com.stinja.iolbs.engines;
 
-import com.stinja.ecs.*;
+import com.stinja.hecs.*;
 import com.stinja.iolbs.components.EncounterComponent;
 import com.stinja.iolbs.components.PlanComponent;
 import com.stinja.iolbs.messages.ActionMessage;

@@ -1,6 +1,6 @@
 package com.stinja.iolbs.engines;
 
-import com.stinja.ecs.*;
+import com.stinja.hecs.*;
 import com.stinja.iolbs.components.*;
 import com.stinja.iolbs.messages.DownedMessage;
 import com.stinja.iolbs.messages.EndOfRoundMessage;

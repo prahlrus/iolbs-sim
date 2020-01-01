@@ -1,10 +1,10 @@
 package com.stinja.iolbs.engines;
 
-import com.stinja.ecs.Accessor;
-import com.stinja.ecs.ComponentAccess;
-import com.stinja.ecs.Engine;
-import com.stinja.ecs.Message;
-import com.stinja.ecs.MessageHandler;
+import com.stinja.hecs.Accessor;
+import com.stinja.hecs.ComponentAccess;
+import com.stinja.hecs.Engine;
+import com.stinja.hecs.Message;
+import com.stinja.hecs.MessageHandler;
 import com.stinja.iolbs.rules.Dice;
 import com.stinja.iolbs.components.EngagedByComponent;
 import com.stinja.iolbs.components.VitalsComponent;

@@ -1,7 +1,7 @@
 package com.stinja.iolbs.components;
 
 import com.stinja.iolbs.rules.Plan;
-import com.stinja.ecs.Component;
+import com.stinja.hecs.Component;
 
 public class InitiativeComponent extends Component {
     public final Plan[][] options;

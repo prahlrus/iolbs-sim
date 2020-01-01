@@ -1,6 +1,6 @@
 package com.stinja.iolbs.engines;
 
-import com.stinja.ecs.*;
+import com.stinja.hecs.*;
 import com.stinja.iolbs.components.DamageComponent;
 import com.stinja.iolbs.components.MonsterComponent;
 import com.stinja.iolbs.components.PlayerComponent;
